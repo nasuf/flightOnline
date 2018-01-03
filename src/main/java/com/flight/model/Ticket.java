@@ -58,6 +58,9 @@ public class Ticket {
 	private String publishDate;
 	
 	@Field
+	private Integer publishWeekOfYear;
+	
+	@Field
 	private String publisher;
 	
 	@Field
@@ -222,6 +225,15 @@ public class Ticket {
 	public void setDepartureDateTo(String departureDateTo) {
 		this.departureDateTo = departureDateTo;
 	}
+	
+
+	public Integer getPublishWeekOfYear() {
+		return publishWeekOfYear;
+	}
+
+	public void setPublishWeekOfYear(Integer publishWeekOfYear) {
+		this.publishWeekOfYear = publishWeekOfYear;
+	}
 
 	@Override
 	public String toString() {
@@ -229,8 +241,9 @@ public class Ticket {
 				+ ", price=" + price + ", departureDateFrom=" + departureDateFrom + ", departureDateTo="
 				+ departureDateTo + ", departureCountry=" + departureCountry + ", departureCity=" + departureCity
 				+ ", arrivalCountry=" + arrivalCountry + ", arrivalCity=" + arrivalCity + ", isTurning=" + isTurning
-				+ ", turningCity=" + turningCity + ", info=" + info + ", publishDate=" + publishDate + ", publisher="
-				+ publisher + ", isDeleted=" + isDeleted + ", replyList=" + replyList + ", replyCnt=" + replyCnt + "]";
+				+ ", turningCity=" + turningCity + ", info=" + info + ", publishDate=" + publishDate
+				+ ", publishWeekOfYear=" + publishWeekOfYear + ", publisher=" + publisher + ", isDeleted=" + isDeleted
+				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + "]";
 	}
 
 

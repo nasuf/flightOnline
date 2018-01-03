@@ -21,6 +21,7 @@ import com.flight.model.User;
 import com.flight.repository.TicketRepository;
 import com.flight.repository.UserRepository;
 import com.flight.utils.Constant;
+import com.flight.utils.DateUtils;
 import com.flight.utils.HttpResult;
 
 @Controller
@@ -35,16 +36,17 @@ public class AdminController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	DateUtils dateUtils = new DateUtils();
+	
 	@RequestMapping(value = "/publish/ticket", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> publishTicket(@RequestBody Ticket ticket, @RequestParam("openid") String openid) {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-		
 		if (null != ticket) {
 			User publisher = this.userRepository.findByOpenid(openid);
-			String publishDate = sdf.format(new Date());
+			Date date = new Date();
 			ticket.setPublisher(publisher.getOpenid());
-			ticket.setPublishDate(publishDate);
+			ticket.setPublishDate(dateUtils.formatWithTimeZone(date));
+			ticket.setPublishWeekOfYear(dateUtils.getWeekOfYear(date));
 			ticket.setIsDeleted(false);
 			Ticket savedTicket = this.ticketRepository.save(ticket);
 			if (null != savedTicket) {
