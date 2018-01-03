@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.flight</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>flight</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>flightOnline</name>
 	<description>Project for Flight Online</description>
@@ -68,12 +68,19 @@
 			<artifactId>jedis</artifactId>
 			<version>2.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
 			<version>1.5.4</version>
 		</dependency>
+
+
 
 	</dependencies>
 

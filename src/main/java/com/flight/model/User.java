@@ -1,5 +1,8 @@
 package com.flight.model;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
@@ -39,6 +42,9 @@ public class User {
 	
 	@Field
 	private String adminPwd;
+	
+	@Field
+	private List<Map<String, Object>> messageList;
 
 	public String getId() {
 		return id;
@@ -119,13 +125,21 @@ public class User {
 	public void setAdminPwd(String adminPwd) {
 		this.adminPwd = adminPwd;
 	}
+	
+
+	public List<Map<String, Object>> getMessageList() {
+		return messageList;
+	}
+
+	public void setMessageList(List<Map<String, Object>> messageList) {
+		this.messageList = messageList;
+	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", nickName=" + nickName + ", openid=" + openid + ", gender=" + gender
 				+ ", avatarUrl=" + avatarUrl + ", language=" + language + ", city=" + city + ", province=" + province
-				+ ", role=" + role + ", adminPwd=" + adminPwd + "]";
+				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList + "]";
 	}
-
 
 }

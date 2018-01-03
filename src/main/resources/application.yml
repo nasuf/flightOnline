@@ -4,5 +4,8 @@ spring:
       host: 120.25.224.11
       port: 28888
       database: flight
+      username: nasuf
+      password: blxyST103166
+       
 server:
   port: 9099

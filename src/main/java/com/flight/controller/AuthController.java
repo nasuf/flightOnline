@@ -65,6 +65,7 @@ public class AuthController {
 					}
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, savedUser.getOpenid());
+					data.put(Constant.ROLE, savedUser.getRole());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "got session_key and openid", data).build(),
 							HttpStatus.OK);
@@ -72,6 +73,7 @@ public class AuthController {
 					logger.info("User [ " + foundUser + " ] has been recorded.");
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, foundUser.getOpenid());
+					data.put(Constant.ROLE, foundUser.getRole());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "found recorded user", data).build(),
 							HttpStatus.OK);
@@ -86,7 +88,7 @@ public class AuthController {
 	
 	@RequestMapping(value = "/info", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> saveInfo(@RequestBody User userInfo, @RequestParam("openid") String openid) {
-		if (null != userInfo && null != openid &&StringUtils.isNotEmpty(openid)) {
+		if (null != userInfo && !StringUtils.isEmpty(openid)) {
 			User foundUser = this.userRepository.findByOpenid(openid);
 			if (null != foundUser) {
 				userInfo.setId(foundUser.getId());

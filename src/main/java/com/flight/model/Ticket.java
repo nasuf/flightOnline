@@ -1,10 +1,19 @@
 package com.flight.model;
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document
 public class Ticket {
+	
+	@Id
+	@NotNull(message = "Id can't be null.")
+	private String id;
 
 	@Field
 	private String title;
@@ -13,10 +22,16 @@ public class Ticket {
 	private Boolean isSingleFlight;
 	
 	@Field
+	private String airline;
+	
+	@Field
 	private String price;
 	
 	@Field
-	private Long departureDate;
+	private String departureDateFrom;
+	
+	@Field
+	private String departureDateTo;
 	
 	@Field
 	private String departureCountry;
@@ -37,10 +52,30 @@ public class Ticket {
 	private String turningCity;
 	
 	@Field
-	private String remark;
+	private String info;
 	
 	@Field
-	private Long pulishDate;
+	private String publishDate;
+	
+	@Field
+	private String publisher;
+	
+	@Field
+	private Boolean isDeleted;
+	
+	@Field
+	private List<String> replyList;
+	
+	@Field
+	private Integer replyCnt;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getTitle() {
 		return title;
@@ -58,6 +93,14 @@ public class Ticket {
 		this.isSingleFlight = isSingleFlight;
 	}
 
+	public String getAirline() {
+		return airline;
+	}
+
+	public void setAirline(String airline) {
+		this.airline = airline;
+	}
+
 	public String getPrice() {
 		return price;
 	}
@@ -66,12 +109,12 @@ public class Ticket {
 		this.price = price;
 	}
 
-	public Long getDepartureDate() {
-		return departureDate;
+	public String getDepartureDateFrom() {
+		return departureDateFrom;
 	}
 
-	public void setDepartureDate(Long departureDate) {
-		this.departureDate = departureDate;
+	public void setDepartureDateFrom(String departureDateFrom) {
+		this.departureDateFrom = departureDateFrom;
 	}
 
 	public String getDepartureCountry() {
@@ -122,29 +165,74 @@ public class Ticket {
 		this.turningCity = turningCity;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getInfo() {
+		return info;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setInfo(String info) {
+		this.info = info;
 	}
 
-	public Long getPulishDate() {
-		return pulishDate;
+	public String getPublishDate() {
+		return publishDate;
 	}
 
-	public void setPulishDate(Long pulishDate) {
-		this.pulishDate = pulishDate;
+	public void setPublishDate(String publishDate) {
+		this.publishDate = publishDate;
+	}
+	
+
+	public String getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
+	
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	
+	public List<String> getReplyList() {
+		return replyList;
+	}
+
+	public void setReplyList(List<String> replyList) {
+		this.replyList = replyList;
+	}
+
+	public Integer getReplyCnt() {
+		return replyCnt;
+	}
+
+	public void setReplyCnt(Integer replyCnt) {
+		this.replyCnt = replyCnt;
+	}
+	
+	public String getDepartureDateTo() {
+		return departureDateTo;
+	}
+
+	public void setDepartureDateTo(String departureDateTo) {
+		this.departureDateTo = departureDateTo;
 	}
 
 	@Override
 	public String toString() {
-		return "Ticket [title=" + title + ", isSingleFlight=" + isSingleFlight + ", price=" + price + ", departureDate="
-				+ departureDate + ", departureCountry=" + departureCountry + ", departureCity=" + departureCity
+		return "Ticket [id=" + id + ", title=" + title + ", isSingleFlight=" + isSingleFlight + ", airline=" + airline
+				+ ", price=" + price + ", departureDateFrom=" + departureDateFrom + ", departureDateTo="
+				+ departureDateTo + ", departureCountry=" + departureCountry + ", departureCity=" + departureCity
 				+ ", arrivalCountry=" + arrivalCountry + ", arrivalCity=" + arrivalCity + ", isTurning=" + isTurning
-				+ ", turningCity=" + turningCity + ", remark=" + remark + ", pulishDate=" + pulishDate + "]";
+				+ ", turningCity=" + turningCity + ", info=" + info + ", publishDate=" + publishDate + ", publisher="
+				+ publisher + ", isDeleted=" + isDeleted + ", replyList=" + replyList + ", replyCnt=" + replyCnt + "]";
 	}
-	
-	
+
+
+
 }
