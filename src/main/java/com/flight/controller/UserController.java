@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.flight.model.Message;
 import com.flight.model.Ticket;
@@ -121,6 +122,39 @@ public class UserController {
 			}
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/oldMember/validate", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> oldMemberValidation(@RequestParam("wechatId") String wechatId, 
+			@RequestParam("openid") String openid) {
+		if (null == wechatId || null == openid) {
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_FAILURE,
+							"WechatId or openid can't be null.").build(),
+					HttpStatus.OK);
+		} else {
+			User foundUser = this.userRepository.findByOpenid(openid);
+			if (null != foundUser) {
+				foundUser.setWechatId(wechatId);
+				User updatedUser = this.userRepository.save(foundUser);
+				if (null != updatedUser)
+					return new ResponseEntity<Map<String, Object>>(
+							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] successfully.").build(),
+							
+							HttpStatus.OK);
+				else 
+					return new ResponseEntity<Map<String, Object>>(
+							new HttpResult(Constant.RESULT_STATUS_FAILURE,
+									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] failed.").build(),
+							HttpStatus.OK);
+			}
+				
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Update wechatId to user failed.").build(),
+				HttpStatus.OK);
 	}
 	
 }

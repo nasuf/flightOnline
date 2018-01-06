@@ -12,6 +12,7 @@ public interface Constant {
 	
 	public static final String OPEN_ID = "openid";
 	public static final String ROLE = "role";
+	public static final String IS_PAYED = "isPayed";
 
 	
 	// Wechat

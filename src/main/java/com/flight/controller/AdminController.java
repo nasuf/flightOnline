@@ -36,8 +36,6 @@ public class AdminController {
 	@Autowired
 	private UserRepository userRepository;
 	
-	DateUtils dateUtils = new DateUtils();
-	
 	@RequestMapping(value = "/publish/ticket", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> publishTicket(@RequestBody Ticket ticket, @RequestParam("openid") String openid) {
 		
@@ -45,8 +43,8 @@ public class AdminController {
 			User publisher = this.userRepository.findByOpenid(openid);
 			Date date = new Date();
 			ticket.setPublisher(publisher.getOpenid());
-			ticket.setPublishDate(dateUtils.formatWithTimeZone(date));
-			ticket.setPublishWeekOfYear(dateUtils.getWeekOfYear(date));
+			ticket.setPublishDate(DateUtils.formatWithTimeZone(date));
+			ticket.setPublishWeekOfYear(DateUtils.getWeekOfYear(date));
 			ticket.setIsDeleted(false);
 			Ticket savedTicket = this.ticketRepository.save(ticket);
 			if (null != savedTicket) {

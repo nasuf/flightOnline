@@ -4,10 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.flight.model.Ticket;
+import com.flight.model.Tourism;
 
-public interface TicketRepository extends MongoRepository<Ticket, String> {
+public interface TourismRepository extends MongoRepository<Tourism, String> {
 
-	Page<Ticket> findAll(Pageable page);
+	Page<Tourism> findAll(Pageable page);
 	
 }

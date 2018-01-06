@@ -66,6 +66,7 @@ public class AuthController {
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, savedUser.getOpenid());
 					data.put(Constant.ROLE, savedUser.getRole());
+					data.put(Constant.IS_PAYED, savedUser.getIsPayed());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "got session_key and openid", data).build(),
 							HttpStatus.OK);
@@ -74,6 +75,7 @@ public class AuthController {
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, foundUser.getOpenid());
 					data.put(Constant.ROLE, foundUser.getRole());
+					data.put(Constant.IS_PAYED, foundUser.getIsPayed());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "found recorded user", data).build(),
 							HttpStatus.OK);
@@ -104,6 +106,7 @@ public class AuthController {
 			} else {
 				userInfo.setRole(Constant.USER_ROLE_USER);
 				userInfo.setOpenid(openid);
+				userInfo.setIsPayed(false);
 				User savedUser = this.userRepository.save(userInfo);
 				if (null != savedUser) {
 					return new ResponseEntity<Map<String, Object>>(

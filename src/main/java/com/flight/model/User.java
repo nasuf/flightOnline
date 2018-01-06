@@ -45,6 +45,12 @@ public class User {
 	
 	@Field
 	private List<Map<String, Object>> messageList;
+	
+	@Field
+	private Boolean isPayed;
+	
+	@Field
+	private String wechatId;
 
 	public String getId() {
 		return id;
@@ -135,11 +141,28 @@ public class User {
 		this.messageList = messageList;
 	}
 
+	public Boolean getIsPayed() {
+		return isPayed;
+	}
+
+	public void setIsPayed(Boolean isPayed) {
+		this.isPayed = isPayed;
+	}
+
+	public String getWechatId() {
+		return wechatId;
+	}
+
+	public void setWechatId(String wechatId) {
+		this.wechatId = wechatId;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", nickName=" + nickName + ", openid=" + openid + ", gender=" + gender
 				+ ", avatarUrl=" + avatarUrl + ", language=" + language + ", city=" + city + ", province=" + province
-				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList + "]";
+				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList + ", isPayed=" + isPayed
+				+ ", wechatId=" + wechatId + "]";
 	}
 
 }

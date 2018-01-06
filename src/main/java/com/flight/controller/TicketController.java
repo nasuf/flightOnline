@@ -7,6 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.flight.model.Message;
 import com.flight.model.Ticket;
 import com.flight.repository.TicketRepository;
 import com.flight.utils.Constant;
@@ -31,10 +34,12 @@ public class TicketController {
 	private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
 	@RequestMapping(value = "/tickets")
-	public ResponseEntity<Map<String, Object>> findAllTickets() {
+	public ResponseEntity<Map<String, Object>> findAllTickets(
+			@RequestParam(value = "pageSize", required = false, defaultValue = "15") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber) {
 
-		List<Ticket> tickets = this.ticketRepository.findAll();
-		Map<String, Object> data = new HashMap<String, Object>();
+		Page<Ticket> ticketsPage = this.ticketRepository.findAll(new PageRequest(pageNumber, pageSize));
+		List<Ticket> tickets = ticketsPage.getContent();
 		return new ResponseEntity<Map<String, Object>>(
 				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Find all tickets data successfully", tickets).build(),
 				HttpStatus.OK);
