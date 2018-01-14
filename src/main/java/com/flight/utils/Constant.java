@@ -25,6 +25,7 @@ public interface Constant {
 	// User Role
 	public static final String USER_ROLE_ADMIN = "ADMIN";
 	public static final String USER_ROLE_USER = "USER";
+	public static final String USER_ROLE_VIP = "VIP";
 	
 	// TOPIC | REPLY
 	public static final String MESSAGE_TYPE = "TYPE";

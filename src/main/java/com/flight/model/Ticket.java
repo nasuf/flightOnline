@@ -71,6 +71,9 @@ public class Ticket {
 	
 	@Field
 	private Integer replyCnt;
+	
+	@Field
+	private String tag;
 
 	public String getId() {
 		return id;
@@ -235,6 +238,14 @@ public class Ticket {
 		this.publishWeekOfYear = publishWeekOfYear;
 	}
 
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", title=" + title + ", isSingleFlight=" + isSingleFlight + ", airline=" + airline
@@ -243,7 +254,7 @@ public class Ticket {
 				+ ", arrivalCountry=" + arrivalCountry + ", arrivalCity=" + arrivalCity + ", isTurning=" + isTurning
 				+ ", turningCity=" + turningCity + ", info=" + info + ", publishDate=" + publishDate
 				+ ", publishWeekOfYear=" + publishWeekOfYear + ", publisher=" + publisher + ", isDeleted=" + isDeleted
-				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + "]";
+				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", tag=" + tag + "]";
 	}
 
 

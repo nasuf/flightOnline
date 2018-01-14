@@ -2,6 +2,7 @@ package com.flight.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -47,10 +48,10 @@ public class User {
 	private List<Map<String, Object>> messageList;
 	
 	@Field
-	private Boolean isPayed;
+	private String wechatId;
 	
 	@Field
-	private String wechatId;
+	private Set<String> signUpTourismList;
 
 	public String getId() {
 		return id;
@@ -141,14 +142,6 @@ public class User {
 		this.messageList = messageList;
 	}
 
-	public Boolean getIsPayed() {
-		return isPayed;
-	}
-
-	public void setIsPayed(Boolean isPayed) {
-		this.isPayed = isPayed;
-	}
-
 	public String getWechatId() {
 		return wechatId;
 	}
@@ -157,12 +150,20 @@ public class User {
 		this.wechatId = wechatId;
 	}
 
+	public Set<String> getSignUpTourismList() {
+		return signUpTourismList;
+	}
+
+	public void setSignUpTourismList(Set<String> signUpTourismList) {
+		this.signUpTourismList = signUpTourismList;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", nickName=" + nickName + ", openid=" + openid + ", gender=" + gender
 				+ ", avatarUrl=" + avatarUrl + ", language=" + language + ", city=" + city + ", province=" + province
-				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList + ", isPayed=" + isPayed
-				+ ", wechatId=" + wechatId + "]";
+				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList
+				+ ", wechatId=" + wechatId + ", signUpTourismList=" + signUpTourismList + "]";
 	}
 
 }

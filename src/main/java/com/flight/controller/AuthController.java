@@ -66,7 +66,6 @@ public class AuthController {
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, savedUser.getOpenid());
 					data.put(Constant.ROLE, savedUser.getRole());
-					data.put(Constant.IS_PAYED, savedUser.getIsPayed());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "got session_key and openid", data).build(),
 							HttpStatus.OK);
@@ -75,7 +74,6 @@ public class AuthController {
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, foundUser.getOpenid());
 					data.put(Constant.ROLE, foundUser.getRole());
-					data.put(Constant.IS_PAYED, foundUser.getIsPayed());
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "found recorded user", data).build(),
 							HttpStatus.OK);
@@ -93,11 +91,14 @@ public class AuthController {
 		if (null != userInfo && !StringUtils.isEmpty(openid)) {
 			User foundUser = this.userRepository.findByOpenid(openid);
 			if (null != foundUser) {
-				userInfo.setId(foundUser.getId());
-				userInfo.setRole(foundUser.getRole());
-				userInfo.setOpenid(foundUser.getOpenid());
-				userInfo.setAdminPwd(foundUser.getAdminPwd());
-				User savedUser = this.userRepository.save(userInfo);
+				foundUser.setNickName(userInfo.getNickName());
+				foundUser.setAvatarUrl(userInfo.getAvatarUrl());
+				foundUser.setCity(userInfo.getCity());
+				foundUser.setGender(userInfo.getGender());
+				foundUser.setLanguage(userInfo.getLanguage());
+				foundUser.setProvince(userInfo.getProvince());
+				
+				User savedUser = this.userRepository.save(foundUser);
 				if (null != savedUser) {
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "update user: [ " + savedUser + " ] successfully.").build(),
@@ -106,7 +107,6 @@ public class AuthController {
 			} else {
 				userInfo.setRole(Constant.USER_ROLE_USER);
 				userInfo.setOpenid(openid);
-				userInfo.setIsPayed(false);
 				User savedUser = this.userRepository.save(userInfo);
 				if (null != savedUser) {
 					return new ResponseEntity<Map<String, Object>>(
@@ -139,6 +139,22 @@ public class AuthController {
 					new HttpResult(Constant.RESULT_STATUS_SUCCESS, "User [ " + openid + " ] is admin offline now.", data).build(),
 					HttpStatus.OK);
 		}
+	}
+	
+	@RequestMapping(value = "/getLatestUserRole", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> getLatestUserRole(@RequestParam("openid") String openid) {
+		if (null != openid) {
+			User foundUser = this.userRepository.findByOpenid(openid);
+			if (null != foundUser) {
+				String role = foundUser.getRole();
+				return new ResponseEntity<Map<String, Object>>(
+						new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Get latest user role successfully.", role).build(),
+						HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE, "Get latest user role failed.").build(),
+				HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/admin/login", method = RequestMethod.POST)

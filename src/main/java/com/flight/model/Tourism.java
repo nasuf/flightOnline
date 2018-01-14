@@ -1,6 +1,8 @@
 package com.flight.model;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,10 +27,10 @@ public class Tourism {
 	private String postDate;
 	
 	@Field
-	private String signUpEndDate;
+	private String posterAvatarUrl;
 	
 	@Field
-	private String festival;
+	private String posterNickName;
 	
 	@Field
 	private String departureDate;
@@ -55,7 +57,7 @@ public class Tourism {
 	private Integer replyCnt;
 	
 	@Field
-	private List<String> participants;
+	private Set<String> participants;
 	
 	@Field
 	private Boolean isFull;
@@ -67,7 +69,7 @@ public class Tourism {
 	private Boolean isDeleted;
 	
 	@Field
-	private List<String> signUpList;
+	private Set<Map<String, String>> signUpSet;
 	
 	@Field
 	private String contact;
@@ -118,22 +120,6 @@ public class Tourism {
 		this.postDate = postDate;
 	}
 
-	public String getSignUpEndDate() {
-		return signUpEndDate;
-	}
-
-	public void setSignUpEndDate(String signUpEndDate) {
-		this.signUpEndDate = signUpEndDate;
-	}
-
-	public String getFestival() {
-		return festival;
-	}
-
-	public void setFestival(String festival) {
-		this.festival = festival;
-	}
-
 	public String getDepartureDate() {
 		return departureDate;
 	}
@@ -174,11 +160,11 @@ public class Tourism {
 		this.replyCnt = replyCnt;
 	}
 
-	public List<String> getParticipants() {
+	public Set<String> getParticipants() {
 		return participants;
 	}
 
-	public void setParticipants(List<String> participants) {
+	public void setParticipants(Set<String> participants) {
 		this.participants = participants;
 	}
 
@@ -206,12 +192,12 @@ public class Tourism {
 		this.isDeleted = isDeleted;
 	}
 
-	public List<String> getSignUpList() {
-		return signUpList;
+	public Set<Map<String, String>> getSignUpSet() {
+		return signUpSet;
 	}
 
-	public void setSignUpList(List<String> signUpList) {
-		this.signUpList = signUpList;
+	public void setSignUpSet(Set<Map<String, String>> signUpSet) {
+		this.signUpSet = signUpSet;
 	}
 
 	public String getContact() {
@@ -254,15 +240,31 @@ public class Tourism {
 		this.postYear = postYear;
 	}
 
+	public String getPosterAvatarUrl() {
+		return posterAvatarUrl;
+	}
+
+	public void setPosterAvatarUrl(String posterAvatarUrl) {
+		this.posterAvatarUrl = posterAvatarUrl;
+	}
+
+	public String getPosterNickName() {
+		return posterNickName;
+	}
+
+	public void setPosterNickName(String posterNickName) {
+		this.posterNickName = posterNickName;
+	}
+
 	@Override
 	public String toString() {
 		return "Tourism [id=" + id + ", title=" + title + ", poster=" + poster + ", postDate=" + postDate
-				+ ", signUpEndDate=" + signUpEndDate + ", festival=" + festival + ", departureDate=" + departureDate
-				+ ", departureLocation=" + departureLocation + ", arrivalLocation=" + arrivalLocation + ", duration="
-				+ duration + ", content=" + content + ", participantCnt=" + participantCnt + ", replyList=" + replyList
-				+ ", replyCnt=" + replyCnt + ", participants=" + participants + ", isFull=" + isFull + ", isEnded="
-				+ isEnded + ", isDeleted=" + isDeleted + ", signUpList=" + signUpList + ", contact=" + contact
-				+ ", postWeekOfYear=" + postWeekOfYear + ", postYear=" + postYear + "]";
+				+ ", posterAvatarUrl=" + posterAvatarUrl + ", posterNickName=" + posterNickName + ", departureDate="
+				+ departureDate + ", departureLocation=" + departureLocation + ", arrivalLocation=" + arrivalLocation
+				+ ", duration=" + duration + ", content=" + content + ", participantCnt=" + participantCnt
+				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", participants=" + participants + ", isFull="
+				+ isFull + ", isEnded=" + isEnded + ", isDeleted=" + isDeleted + ", signUpSet=" + signUpSet
+				+ ", contact=" + contact + ", postWeekOfYear=" + postWeekOfYear + ", postYear=" + postYear + "]";
 	}
 	
 	
