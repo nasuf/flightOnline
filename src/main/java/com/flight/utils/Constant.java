@@ -39,9 +39,12 @@ public interface Constant {
 	public static final String MESSAGE_SUBJECT_TICKET = "TICKET";
 	public static final String MESSAGE_SUBJECT_QUESTION = "QUESTION";
 	public static final String MESSAGE_SUBJECT_TOURISM = "TOURISM";
-	public static final String MESSAG_SUBJECT_CUSTOM = "CUSTOM";
+	public static final String MESSAGE_SUBJECT_CUSTOM = "CUSTOM";
 	
 	public static final String MESSAGE_ID = "MESSAGE_ID";
 	public static final String MESSAGE_CONTENT = "MESSAGE_CONTENT";
+	
+	public static final Integer QUESTION_FIXED = 1;
+	public static final Integer QUESTION_UNFIXED = 0;
 	
 }

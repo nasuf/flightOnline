@@ -55,7 +55,7 @@ public class Ticket {
 	private String info;
 	
 	@Field
-	private String publishDate;
+	private Long publishDate;
 	
 	@Field
 	private Integer publishWeekOfYear;
@@ -65,6 +65,9 @@ public class Ticket {
 	
 	@Field
 	private Boolean isDeleted;
+	
+	@Field
+	private Long deletedDate;
 	
 	@Field
 	private List<String> replyList;
@@ -179,11 +182,11 @@ public class Ticket {
 		this.info = info;
 	}
 
-	public String getPublishDate() {
+	public Long getPublishDate() {
 		return publishDate;
 	}
 
-	public void setPublishDate(String publishDate) {
+	public void setPublishDate(Long publishDate) {
 		this.publishDate = publishDate;
 	}
 	
@@ -246,6 +249,14 @@ public class Ticket {
 		this.tag = tag;
 	}
 
+	public Long getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(Long deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", title=" + title + ", isSingleFlight=" + isSingleFlight + ", airline=" + airline
@@ -254,7 +265,8 @@ public class Ticket {
 				+ ", arrivalCountry=" + arrivalCountry + ", arrivalCity=" + arrivalCity + ", isTurning=" + isTurning
 				+ ", turningCity=" + turningCity + ", info=" + info + ", publishDate=" + publishDate
 				+ ", publishWeekOfYear=" + publishWeekOfYear + ", publisher=" + publisher + ", isDeleted=" + isDeleted
-				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", tag=" + tag + "]";
+				+ ", deletedDate=" + deletedDate + ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", tag="
+				+ tag + "]";
 	}
 
 

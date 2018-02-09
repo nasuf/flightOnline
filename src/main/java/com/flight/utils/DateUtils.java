@@ -24,5 +24,9 @@ public class DateUtils {
 		System.out.println(calendar.get(Calendar.WEEK_OF_YEAR)); 
 		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
+	/*
+	public static void main(String[] args) {
+		System.out.println(DateUtils.getWeekOfYear(new Date(1514990628000L)));
+	}*/
 
 }

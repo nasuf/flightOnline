@@ -27,16 +27,19 @@ public class Message {
 	private String beRepliedTopicId;
 	
 	@Field
+	private String beRepliedTopicTitle;
+	
+	@Field
 	private String beRepliedMessageId;
 	
 	@Field
-	private String beRepliedPostDate;
+	private Long beRepliedPostDate;
 	
 	@Field
 	private String subject; // TICKET | QUESTION | TOURISM | CUSTOM
 	
 	@Field
-	private String postDate;
+	private Long postDate;
 	
 	@Field
 	private String poster;
@@ -49,6 +52,9 @@ public class Message {
 	
 	@Field
 	private Boolean isDeleted;
+	
+	@Field
+	private Long deletedDate;
 	
 	@Field
 	private Integer replyCnt;
@@ -86,11 +92,11 @@ public class Message {
 		this.subject = subject;
 	}
 
-	public String getPostDate() {
+	public Long getPostDate() {
 		return postDate;
 	}
 
-	public void setPostDate(String postDate) {
+	public void setPostDate(Long postDate) {
 		this.postDate = postDate;
 	}
 
@@ -183,22 +189,39 @@ public class Message {
 		this.posterNickName = posterNickName;
 	}
 
-	public String getBeRepliedPostDate() {
+	public Long getBeRepliedPostDate() {
 		return beRepliedPostDate;
 	}
 
-	public void setBeRepliedPostDate(String beRepliedPostDate) {
+	public void setBeRepliedPostDate(Long beRepliedPostDate) {
 		this.beRepliedPostDate = beRepliedPostDate;
+	}
+
+	public String getBeRepliedTopicTitle() {
+		return beRepliedTopicTitle;
+	}
+
+	public void setBeRepliedTopicTitle(String beRepliedTopicTitle) {
+		this.beRepliedTopicTitle = beRepliedTopicTitle;
+	}
+
+	public Long getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(Long deletedDate) {
+		this.deletedDate = deletedDate;
 	}
 
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", type=" + type + ", beRepliedPoster=" + beRepliedPoster + ", beRepliedTopicId="
-				+ beRepliedTopicId + ", beRepliedMessageId=" + beRepliedMessageId + ", beRepliedPostDate="
-				+ beRepliedPostDate + ", subject=" + subject + ", postDate=" + postDate + ", poster=" + poster
-				+ ", posterAvatarUrl=" + posterAvatarUrl + ", posterNickName=" + posterNickName + ", isDeleted="
-				+ isDeleted + ", replyCnt=" + replyCnt + ", isSticky=" + isSticky + ", content=" + content
-				+ ", replyList=" + replyList + "]";
+				+ beRepliedTopicId + ", beRepliedTopicTitle=" + beRepliedTopicTitle + ", beRepliedMessageId="
+				+ beRepliedMessageId + ", beRepliedPostDate=" + beRepliedPostDate + ", subject=" + subject
+				+ ", postDate=" + postDate + ", poster=" + poster + ", posterAvatarUrl=" + posterAvatarUrl
+				+ ", posterNickName=" + posterNickName + ", isDeleted=" + isDeleted + ", deletedDate=" + deletedDate
+				+ ", replyCnt=" + replyCnt + ", isSticky=" + isSticky + ", content=" + content + ", replyList="
+				+ replyList + "]";
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.flight.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,7 @@ import com.flight.model.Question;
 import com.flight.repository.QuestionRepository;
 import com.flight.utils.Constant;
 import com.flight.utils.HttpResult;
+import com.flight.utils.MongoUtils;
 
 @Controller
 @RequestMapping("question")
@@ -37,8 +40,9 @@ public class QuestionController {
 	@RequestMapping(value = "questions", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> findAllQuestions(
 			@RequestParam(value = "pageSize", required = false, defaultValue = "15") int pageSize,
-			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber ) {
-		Page<Question> questionsPage = this.questionRepository.findAll(new PageRequest(pageNumber, pageSize));
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		Page<Question> questionsPage = this.questionRepository.findAll(new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
 		
 		List<Question> questions = questionsPage.getContent();
 		return new ResponseEntity<Map<String, Object>>(
@@ -46,8 +50,31 @@ public class QuestionController {
 				HttpStatus.OK);
 	}
 	
+
+	@RequestMapping(value = "/question", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> raiseQuestion(@RequestBody Question question) {
+		
+		if (null != question) {
+			question.setIsDeleted(false);
+			question.setIsFixed(Constant.QUESTION_UNFIXED);
+			question.setPostDate(new Date().getTime());
+			question.setReplyCnt(0);
+			Question savedQuestion = this.questionRepository.save(question);
+			if (null != savedQuestion) {
+				return new ResponseEntity<Map<String, Object>>(
+						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+								"Question [ " + savedQuestion.getId() + " ] raised successfully.").build(),
+						HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Question raised failed.").build(),
+				HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "question", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<Map<String, Object>> findTicket(@RequestParam("questionId") String id) {
+	public @ResponseBody ResponseEntity<Map<String, Object>> findQuestion(@RequestParam("questionId") String id) {
 		if (null != id) {
 			Question foundQuestion = this.questionRepository.findOne(id);
 			if (null != foundQuestion) {
@@ -65,24 +92,25 @@ public class QuestionController {
 	}
 	
 	@RequestMapping(value = "/question/{id}", method = RequestMethod.DELETE)
-	public @ResponseBody ResponseEntity<Map<String, Object>> deleteTicket(@PathVariable("id") String id) {
+	public @ResponseBody ResponseEntity<Map<String, Object>> deleteQuestion(@PathVariable("id") String id) {
 		if (null != id) {
 			Question foundQuestion = this.questionRepository.findOne(id);
 			if (null != foundQuestion) {
 				foundQuestion.setIsDeleted(true);
+				foundQuestion.setDeletedDate(new Date().getTime());
 				Question updatedQuestion = this.questionRepository.save(foundQuestion);
 				if (null != updatedQuestion) {
 					logger.info("Set question " + updatedQuestion.getId() + " deleted as [true]  successfully.");
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-									"Set ticket " + updatedQuestion.getId() + " deleted as [true]  successfully.").build(),
+									"Set question " + updatedQuestion.getId() + " deleted as [true]  successfully.").build(),
 							HttpStatus.OK);
 				}
 			}
 		}
 		return new ResponseEntity<Map<String, Object>>(
 				new HttpResult(Constant.RESULT_STATUS_FAILURE,
-						"Set ticket deleted as [true]  successfully.").build(),
+						"Set ticket deleted as [true]  failed.").build(),
 				HttpStatus.OK);
 	}
 	

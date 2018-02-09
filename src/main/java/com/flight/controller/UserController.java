@@ -1,16 +1,17 @@
 package com.flight.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,20 +19,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.flight.model.Custom;
 import com.flight.model.Message;
+import com.flight.model.PrivMessage;
 import com.flight.model.Question;
 import com.flight.model.Ticket;
 import com.flight.model.Tourism;
 import com.flight.model.User;
+import com.flight.repository.CustomRepository;
 import com.flight.repository.MessageRepository;
+import com.flight.repository.PrivMessageRepository;
 import com.flight.repository.QuestionRepository;
 import com.flight.repository.TicketRepository;
 import com.flight.repository.TourismRepository;
 import com.flight.repository.UserRepository;
 import com.flight.utils.Constant;
-import com.flight.utils.DateUtils;
 import com.flight.utils.HttpResult;
+import com.flight.utils.MongoUtils;
 
 @Controller
 @RequestMapping("user")
@@ -52,198 +58,190 @@ public class UserController {
 	@Autowired
 	private QuestionRepository questionRepository;
 	
+	@Autowired
+	private CustomRepository customRepository;
+	
+	@Autowired
+	private PrivMessageRepository privMsgRepository;
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-	@RequestMapping(value = "/message", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> postMessage(@RequestBody Message message) {
-		if (null != message) {
-			// save new message
-			message.setIsDeleted(false);
-			message.setIsSticky(false);
-			message.setPostDate(DateUtils.formatWithTimeZone(new Date()));
-			Message savedMessage = this.messageRepository.save(message);
-			if (null != savedMessage) {
-				
-				// update poster info
-				User foundPoster = this.userRepository.findByOpenid(message.getPoster());
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put(Constant.MESSAGE_SUBJECT, savedMessage.getSubject());
-				map.put(Constant.MESSAGE_TYPE, savedMessage.getType());
-				map.put(Constant.MESSAGE_ID, savedMessage.getId());
-				map.put(Constant.MESSAGE_CONTENT, savedMessage.getContent());
-				List<Map<String, Object>> list = foundPoster.getMessageList();
-				if (null == list)
-					list = new ArrayList<Map<String, Object>> ();
-				list.add(map);
-				foundPoster.setMessageList(list);
-				User updatedPoster = this.userRepository.save(foundPoster);
-				if (null != updatedPoster) 
-					logger.info("Update user [ " + updatedPoster.getId() + " ] message list successfully.");
-				
-				// update topic reply list
-				if (savedMessage.getSubject().equals(Constant.MESSAGE_SUBJECT_TICKET)) {
-					Ticket beRepliedTicket = this.ticketRepository.findOne(savedMessage.getBeRepliedTopicId());
-					List<String> replyList = beRepliedTicket.getReplyList();
-					if (null == replyList) 
-						replyList = new ArrayList<String> ();
-					replyList.add(savedMessage.getId());
-					beRepliedTicket.setReplyList(replyList);
-					beRepliedTicket.setReplyCnt(null == beRepliedTicket.getReplyCnt() ? 1 : beRepliedTicket.getReplyCnt() + 1);
-					Ticket updatedBeRepliedTicket = this.ticketRepository.save(beRepliedTicket);
-					if (null != updatedBeRepliedTicket) 
-						logger.info("Update message [ " + updatedBeRepliedTicket.getId() + " ] reply list successfully.");
-					
-				} else if (savedMessage.getSubject().equals(Constant.MESSAGE_SUBJECT_TOURISM)) {
-					Tourism beRepliedTourism = this.tourismRepository.findOne(savedMessage.getBeRepliedTopicId());
-					List<String> replyList = beRepliedTourism.getReplyList();
-					if (null == replyList) 
-						replyList = new ArrayList<String> ();
-					replyList.add(savedMessage.getId());
-					beRepliedTourism.setReplyList(replyList);
-					beRepliedTourism.setReplyCnt(null == beRepliedTourism.getReplyCnt() ? 1 : beRepliedTourism.getReplyCnt() + 1);
-					Tourism updatedBeRepliedTourism = this.tourismRepository.save(beRepliedTourism);
-					if (null != updatedBeRepliedTourism) 
-						logger.info("Update message [ " + updatedBeRepliedTourism.getId() + " ] reply list successfully.");
-				} else if (savedMessage.getSubject().equals(Constant.MESSAGE_SUBJECT_QUESTION)) {
-					Question beRepliedQuestion = this.questionRepository.findOne(savedMessage.getBeRepliedTopicId());
-					List<String> replyList = beRepliedQuestion.getReplyList();
-					if (null == replyList) 
-						replyList = new ArrayList<String> ();
-					replyList.add(savedMessage.getId());
-					beRepliedQuestion.setReplyList(replyList);
-					beRepliedQuestion.setReplyCnt(null == beRepliedQuestion.getReplyCnt() ? 1 : beRepliedQuestion.getReplyCnt() + 1);
-					Question updatedBeRepliedQuestion = this.questionRepository.save(beRepliedQuestion);
-					if (null != updatedBeRepliedQuestion) 
-						logger.info("Update message [ " + updatedBeRepliedQuestion.getId() + " ] reply list successfully.");
-				}
-				
-				// update beRepliedMessage
-				if (savedMessage.getType().equals(Constant.MESSAGE_TYPE_REPLY) && null != savedMessage.getBeRepliedMessageId()) {
-					Message beRepliedMessage = this.messageRepository.findOne(savedMessage.getBeRepliedMessageId());
-					List<String> replyList_msg = savedMessage.getReplyList();
-					if (null == replyList_msg)
-						replyList_msg = new ArrayList<String> ();
-					replyList_msg.add(savedMessage.getId());
-					beRepliedMessage.setReplyList(replyList_msg);
-					beRepliedMessage.setReplyCnt(null == beRepliedMessage.getReplyCnt() ? 1 : beRepliedMessage.getReplyCnt() + 1);
-					Message updatedBeRepliedMessage = this.messageRepository.save(beRepliedMessage);
-					if (null != updatedBeRepliedMessage) 
-						logger.info("Update BeRepliedMessage [ " + updatedBeRepliedMessage.getId() + " ] successfully.");
-				}
-				
-				
-				return new ResponseEntity<Map<String, Object>>(
-						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-								"Save new message [ "+ savedMessage.getId() +" ] successfully.").build(),
-						HttpStatus.OK);
-			} else {
-				return new ResponseEntity<Map<String, Object>>(
-						new HttpResult(Constant.RESULT_STATUS_FAILURE,
-								"Save new message [ "+ savedMessage.getId() +" ] failed.").build(),
-						HttpStatus.OK);
-			}
+	
+	@RequestMapping(value = "topics/tickets", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findUserTicketTopics(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Ticket> ticketPage = this.ticketRepository.findByPublisher(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Ticket> tickets = ticketPage.getContent();
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user tickets records successfully.", tickets).build(),
+					HttpStatus.OK);
 		}
 		return new ResponseEntity<Map<String, Object>>(
 				new HttpResult(Constant.RESULT_STATUS_FAILURE,
-						"Save new message failed.").build(),
+						"Find user tickets records failed.").build(),
+				HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping(value = "topics/tourisms", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findUserTourismTopics(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Tourism> tourismPage = this.tourismRepository.findByPoster(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Tourism> tourisms = tourismPage.getContent();
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user tourisms records successfully.", tourisms).build(),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user tourisms records failed.").build(),
 				HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/oldMember/validate", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> oldMemberValidation(@RequestParam("wechatId") String wechatId, 
-			@RequestParam("openid") String openid) {
-		if (null == wechatId || null == openid) {
+	@RequestMapping(value = "topics/questions", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findUserQuestionTopics(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Question> questionPage = this.questionRepository.findByPoster(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Question> questions = questionPage.getContent();
 			return new ResponseEntity<Map<String, Object>>(
-					new HttpResult(Constant.RESULT_STATUS_FAILURE,
-							"WechatId or openid can't be null.").build(),
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user questions records successfully.", questions).build(),
 					HttpStatus.OK);
-		} else {
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user questions records failed.").build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "topics/customs", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findUserCustomTopics(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Custom> customPage = this.customRepository.findByPoster(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Custom> customs = customPage.getContent();
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user customs records successfully.", customs).build(),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user customs records failed.").build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "comments/sent", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findCommentsSent(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Message> msgPage = this.messageRepository.findByPoster(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Message> messages = msgPage.getContent();
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user message sent records successfully.", messages).build(),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user message sent records failed.").build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "comments/received", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findCommentsReceived(@RequestParam("openid") String openid,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		if (null != openid) {
+			Page<Message> msgPage = this.messageRepository.findByBeRepliedPoster(openid, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+			List<Message> messages = msgPage.getContent();
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user message received records successfully.", messages).build(),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user message received records failed.").build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<Map<String, Object>> findUser(@RequestParam("openid") String openid) {
+		if (null != openid) {
 			User foundUser = this.userRepository.findByOpenid(openid);
-			if (null != foundUser) {
-				foundUser.setWechatId(wechatId);
+			List<PrivMessage> privMessageList = foundUser.getPrivMessageList();
+			if (null != privMessageList && privMessageList.size() != 0) {
+				Collections.sort(privMessageList, new Comparator<PrivMessage>() {  
+					@Override
+					public int compare(PrivMessage m1, PrivMessage m2) {
+						return m1.getPostDate() < m2.getPostDate() ? 1 : -1;
+					}  
+		        });
+			}
+			List<Map<String,Object>> signUpTourismList = foundUser.getSignUpTourismList();
+			
+			if (null != signUpTourismList && signUpTourismList.size() != 0) {
+				Collections.sort(signUpTourismList, new Comparator<Map<String, Object>>(){
+					@Override
+					public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+						return (Long)m1.get("date") < (Long)m2.get("date") ? 1 : -1;
+					}
+				});
+			}
+			foundUser.setPrivMessageList(privMessageList);
+			return new ResponseEntity<Map<String, Object>>(
+					new HttpResult(Constant.RESULT_STATUS_SUCCESS,
+							"Find user successfully.", foundUser).build(),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_FAILURE,
+						"Find user successfully.").build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/sent/privmsg", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> sendPrivMsgToAdmin(@RequestBody PrivMessage msg) {
+		if (null != msg) {
+			User foundUser = this.userRepository.findByOpenid(msg.getPoster());
+			msg.setPostDate(new Date().getTime());
+			msg.setPosterNickName(foundUser.getNickName());
+			PrivMessage savedPrivMsg = this.privMsgRepository.save(msg);
+			if (null != savedPrivMsg) {
+				List<PrivMessage> list = foundUser.getPrivMessageList();
+				if (null == list) 
+					list = new ArrayList<PrivMessage>();
+				list.add(savedPrivMsg);
+				foundUser.setPrivMessageList(list);
+				foundUser.setWechatId(msg.getWechatId());
 				User updatedUser = this.userRepository.save(foundUser);
-				if (null != updatedUser)
+				if (null != updatedUser && null != savedPrivMsg) {
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] successfully.").build(),
-							
+									"Sent private message to admin successfully.").build(),
 							HttpStatus.OK);
-				else 
-					return new ResponseEntity<Map<String, Object>>(
-							new HttpResult(Constant.RESULT_STATUS_FAILURE,
-									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] failed.").build(),
-							HttpStatus.OK);
-			}
-				
-		}
-		return new ResponseEntity<Map<String, Object>>(
-				new HttpResult(Constant.RESULT_STATUS_FAILURE,
-						"Update wechatId to user failed.").build(),
-				HttpStatus.OK);
-	}
-	
-	@RequestMapping(value = "tourism/signUp", method = RequestMethod.GET)
-	public ResponseEntity<Map<String, Object>> tourismSignUp(
-			@RequestParam("openid") String openid, 
-			@RequestParam("wechatId") String wechatId,
-			@RequestParam("tourismId") String tourismId,
-			@RequestParam("personalMsg") String personalMsg) {
-		if (null == wechatId || null == openid) {
-			return new ResponseEntity<Map<String, Object>>(
-					new HttpResult(Constant.RESULT_STATUS_FAILURE,
-							"WechatId or openid can't be null.").build(),
-					HttpStatus.OK);
-		} else {
-			Tourism foundTourism = this.tourismRepository.findOne(tourismId);
-			Set<Map<String, String>> signUpSet = foundTourism.getSignUpSet();
-			if (null == signUpSet)
-				signUpSet = new HashSet<Map<String, String>> ();
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("openid", openid);
-			map.put("personMsg", personalMsg);
-			signUpSet.add(map);
-			foundTourism.setSignUpSet(signUpSet);
-			Tourism savedTourism = this.tourismRepository.save(foundTourism);
-			User foundUser = this.userRepository.findByOpenid(openid);
-			Set<String> signUpTourismList = foundUser.getSignUpTourismList();
-			if (null == signUpTourismList) 
-				signUpTourismList = new HashSet<String>();
-			signUpTourismList.add(tourismId);
-			foundUser.setSignUpTourismList(signUpTourismList);
-			foundUser.setWechatId(wechatId);
-			User savedUser = this.userRepository.save(foundUser);
-			if (null != savedTourism && null != savedUser)
-				return new ResponseEntity<Map<String, Object>>(
-						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-								"User [ " + savedUser.getOpenid() + " ] signUp tourism [ " + savedTourism.getId() + " ] "
-										+ "successfully.").build(),
-						HttpStatus.OK);
-		}
-		return new ResponseEntity<Map<String, Object>>(
-				new HttpResult(Constant.RESULT_STATUS_FAILURE,
-						"Signup tourism failed.").build(),
-				HttpStatus.OK);
-	}
-	
-	@RequestMapping(value = "/question", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> raiseQuestion(@RequestBody Question question) {
-		
-		if (null != question) {
-			question.setIsDeleted(false);
-			question.setIsFixed(false);
-			question.setPostDate(DateUtils.formatWithTimeZone(new Date()));
-			question.setReplyCnt(0);
-			Question savedQuestion = this.questionRepository.save(question);
-			if (null != savedQuestion) {
-				return new ResponseEntity<Map<String, Object>>(
-						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-								"Question [ " + savedQuestion.getId() + " ] raised successfully.").build(),
-						HttpStatus.OK);
+				}
 			}
 		}
 		return new ResponseEntity<Map<String, Object>>(
 				new HttpResult(Constant.RESULT_STATUS_FAILURE,
-						"Question raised failed.").build(),
+						"Sent private message to admin failed.").build(),
 				HttpStatus.OK);
 	}
 	

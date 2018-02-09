@@ -24,7 +24,7 @@ public class Tourism {
 	private String poster;
 	
 	@Field
-	private String postDate;
+	private Long postDate;
 	
 	@Field
 	private String posterAvatarUrl;
@@ -69,6 +69,9 @@ public class Tourism {
 	private Boolean isDeleted;
 	
 	@Field
+	private Long deletedDate;
+	
+	@Field
 	private Set<Map<String, String>> signUpSet;
 	
 	@Field
@@ -104,7 +107,7 @@ public class Tourism {
 		this.poster = poster;
 	}
 
-	public String getPostDate() {
+	public Long getPostDate() {
 		return postDate;
 	}
 	
@@ -116,7 +119,7 @@ public class Tourism {
 		this.departureLocation = departureLocation;
 	}
 
-	public void setPostDate(String postDate) {
+	public void setPostDate(Long postDate) {
 		this.postDate = postDate;
 	}
 
@@ -256,6 +259,14 @@ public class Tourism {
 		this.posterNickName = posterNickName;
 	}
 
+	public Long getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(Long deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+
 	@Override
 	public String toString() {
 		return "Tourism [id=" + id + ", title=" + title + ", poster=" + poster + ", postDate=" + postDate
@@ -263,8 +274,9 @@ public class Tourism {
 				+ departureDate + ", departureLocation=" + departureLocation + ", arrivalLocation=" + arrivalLocation
 				+ ", duration=" + duration + ", content=" + content + ", participantCnt=" + participantCnt
 				+ ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", participants=" + participants + ", isFull="
-				+ isFull + ", isEnded=" + isEnded + ", isDeleted=" + isDeleted + ", signUpSet=" + signUpSet
-				+ ", contact=" + contact + ", postWeekOfYear=" + postWeekOfYear + ", postYear=" + postYear + "]";
+				+ isFull + ", isEnded=" + isEnded + ", isDeleted=" + isDeleted + ", deletedDate=" + deletedDate
+				+ ", signUpSet=" + signUpSet + ", contact=" + contact + ", postWeekOfYear=" + postWeekOfYear
+				+ ", postYear=" + postYear + "]";
 	}
 	
 	

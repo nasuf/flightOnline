@@ -19,7 +19,7 @@ public class Question {
 	private String title;
 	
 	@Field
-	private String postDate;
+	private Long postDate;
 	
 	@Field
 	private String posterAvatarUrl;
@@ -37,13 +37,16 @@ public class Question {
 	private Boolean isDeleted;
 	
 	@Field
+	private Long deletedDate;
+	
+	@Field
 	private List<String> replyList;
 	
 	@Field
 	private Integer replyCnt;
 	
 	@Field
-	private Boolean isFixed;
+	private Integer isFixed;
 	
 	@Field
 	private String bestAnswer;
@@ -103,11 +106,11 @@ public class Question {
 		this.title = title;
 	}
 
-	public String getPostDate() {
+	public Long getPostDate() {
 		return postDate;
 	}
 
-	public void setPostDate(String postDate) {
+	public void setPostDate(Long postDate) {
 		this.postDate = postDate;
 	}
 
@@ -159,11 +162,11 @@ public class Question {
 		this.replyCnt = replyCnt;
 	}
 
-	public Boolean getIsFixed() {
+	public Integer getIsFixed() {
 		return isFixed;
 	}
 
-	public void setIsFixed(Boolean isFixed) {
+	public void setIsFixed(Integer isFixed) {
 		this.isFixed = isFixed;
 	}
 
@@ -183,12 +186,20 @@ public class Question {
 		this.bestAnswer = bestAnswer;
 	}
 
+	public Long getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(Long deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+
 	@Override
 	public String toString() {
 		return "Question [id=" + id + ", title=" + title + ", postDate=" + postDate + ", posterAvatarUrl="
 				+ posterAvatarUrl + ", poster=" + poster + ", posterNickName=" + posterNickName + ", content=" + content
-				+ ", isDeleted=" + isDeleted + ", replyList=" + replyList + ", replyCnt=" + replyCnt + ", isFixed="
-				+ isFixed + ", bestAnswer=" + bestAnswer + "]";
+				+ ", isDeleted=" + isDeleted + ", deletedDate=" + deletedDate + ", replyList=" + replyList
+				+ ", replyCnt=" + replyCnt + ", isFixed=" + isFixed + ", bestAnswer=" + bestAnswer + "]";
 	}
 	
 

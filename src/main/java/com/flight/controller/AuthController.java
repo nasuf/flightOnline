@@ -61,7 +61,7 @@ public class AuthController {
 					user.setAdminPwd(null);
 					User savedUser = userRepository.save(user);
 					if (null != savedUser) {
-						logger.info("New user [ " + savedUser.toString() + " ] saved successfully.");
+						logger.info("New user [ " + savedUser.getId() + " ] saved successfully.");
 					}
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, savedUser.getOpenid());
@@ -70,7 +70,7 @@ public class AuthController {
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "got session_key and openid", data).build(),
 							HttpStatus.OK);
 				} else {
-					logger.info("User [ " + foundUser + " ] has been recorded.");
+					logger.info("User [ " + foundUser.getId() + " ] has been recorded.");
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, foundUser.getOpenid());
 					data.put(Constant.ROLE, foundUser.getRole());

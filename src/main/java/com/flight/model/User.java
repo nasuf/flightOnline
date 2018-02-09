@@ -45,13 +45,22 @@ public class User {
 	private String adminPwd;
 	
 	@Field
-	private List<Map<String, Object>> messageList;
-	
-	@Field
 	private String wechatId;
 	
 	@Field
-	private Set<String> signUpTourismList;
+	private List<Map<String, Object>> signUpTourismList;
+	
+	@Field
+	private Set<String> signUpCustomResourceSet;
+	
+	@Field
+	private Long registerDate;
+	
+	@Field
+	private Long beVipDate;
+	
+	@Field
+	private List<PrivMessage> privMessageList;
 
 	public String getId() {
 		return id;
@@ -132,15 +141,6 @@ public class User {
 	public void setAdminPwd(String adminPwd) {
 		this.adminPwd = adminPwd;
 	}
-	
-
-	public List<Map<String, Object>> getMessageList() {
-		return messageList;
-	}
-
-	public void setMessageList(List<Map<String, Object>> messageList) {
-		this.messageList = messageList;
-	}
 
 	public String getWechatId() {
 		return wechatId;
@@ -150,20 +150,54 @@ public class User {
 		this.wechatId = wechatId;
 	}
 
-	public Set<String> getSignUpTourismList() {
+	public Long getRegisterDate() {
+		return registerDate;
+	}
+
+	public void setRegisterDate(Long registerDate) {
+		this.registerDate = registerDate;
+	}
+
+	public Long getBeVipDate() {
+		return beVipDate;
+	}
+
+	public void setBeVipDate(Long beVipDate) {
+		this.beVipDate = beVipDate;
+	}
+
+	public Set<String> getSignUpCustomResourceSet() {
+		return signUpCustomResourceSet;
+	}
+
+	public void setSignUpCustomResourceSet(Set<String> signUpCustomResourceSet) {
+		this.signUpCustomResourceSet = signUpCustomResourceSet;
+	}
+
+	public List<Map<String, Object>> getSignUpTourismList() {
 		return signUpTourismList;
 	}
 
-	public void setSignUpTourismList(Set<String> signUpTourismList) {
+	public void setSignUpTourismList(List<Map<String, Object>> signUpTourismList) {
 		this.signUpTourismList = signUpTourismList;
+	}
+
+	public List<PrivMessage> getPrivMessageList() {
+		return privMessageList;
+	}
+
+	public void setPrivMessageList(List<PrivMessage> privMessageList) {
+		this.privMessageList = privMessageList;
 	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", nickName=" + nickName + ", openid=" + openid + ", gender=" + gender
 				+ ", avatarUrl=" + avatarUrl + ", language=" + language + ", city=" + city + ", province=" + province
-				+ ", role=" + role + ", adminPwd=" + adminPwd + ", messageList=" + messageList
-				+ ", wechatId=" + wechatId + ", signUpTourismList=" + signUpTourismList + "]";
+				+ ", role=" + role + ", adminPwd=" + adminPwd + ", wechatId=" + wechatId + ", signUpTourismList="
+				+ signUpTourismList + ", signUpCustomResourceSet=" + signUpCustomResourceSet + ", registerDate="
+				+ registerDate + ", beVipDate=" + beVipDate + ", privMessageList=" + privMessageList + "]";
 	}
+
 
 }
