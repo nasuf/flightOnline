@@ -58,9 +58,9 @@ public class TourismController {
 			tourism.setPostWeekOfYear(DateUtils.getWeekOfYear(now));
 			tourism.setPoster(openid);
 			tourism.setReplyCnt(0);
-			tourism.setPosterAvatarUrl(foundUser.getAvatarUrl());
 			Tourism savedTourism = this.tourismRepository.save(tourism);
 			if (null != savedTourism) {
+				logger.info("User [" + savedTourism.getPosterNickName() + "] posted a tourism topic [ " + savedTourism.getTitle() + " ] successfully.");
 				return new ResponseEntity<Map<String, Object>>(
 						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 								"Save new tourism [ " + savedTourism.getId() + " ] successfully.").build(),
@@ -170,6 +170,7 @@ public class TourismController {
 			foundSentor.setSignUpTourismList(signUpTourismSentList);
 			foundSentor.setWechatId(wechatId);
 			User savedSentor = this.userRepository.save(foundSentor);
+			logger.info("User [NICKNAME:" + foundSentor.getNickName() + ", OPENID:"+foundSentor.getOpenid()+"] sent a signup message ["+signUpMapSent.toString()+"]");
 			// 更新收信人 私信
 			User foundNewReceiver = this.userRepository.findByOpenid(tourismPoster);
 			List<Map<String, Object>> signUpTourismReceivedList = foundNewReceiver.getSignUpTourismList();

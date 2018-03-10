@@ -232,6 +232,7 @@ public class UserController {
 				foundUser.setWechatId(msg.getWechatId());
 				User updatedUser = this.userRepository.save(foundUser);
 				if (null != updatedUser && null != savedPrivMsg) {
+					logger.info("User [NICKNAME:" + foundUser.getNickName() + ", OPENID:[" + foundUser.getOpenid() + "] sent a private message to admin: [" + savedPrivMsg.getContent() + "]");
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 									"Sent private message to admin successfully.").build(),

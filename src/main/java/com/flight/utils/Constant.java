@@ -16,8 +16,8 @@ public interface Constant {
 
 	
 	// Wechat
-	public static final String APPID = "wxfa215961decf944c";// test account: "wxa6060fbdcbb1611c";
-	public static final String SECRET = "21028fef3a271a280c2712240bb0e3ba";// test account:  "d4624c36b6795d1d99dcf0547af5443d";
+	public static final String APPID = "wxc8a070e6d35c9e29";// test account: "  wxfa215961decf944c";
+	public static final String SECRET = "93a36931405bd241f123f9497dca2792";// test account:  "  21028fef3a271a280c2712240bb0e3ba";
 	
 	public static final String AUTH_URL = "https://api.weixin.qq.com/sns/jscode2session?"
 			+ "appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";

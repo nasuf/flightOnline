@@ -61,7 +61,7 @@ public class AuthController {
 					user.setAdminPwd(null);
 					User savedUser = userRepository.save(user);
 					if (null != savedUser) {
-						logger.info("New user [ " + savedUser.getId() + " ] saved successfully.");
+						logger.info("New user [ OPENID: " + savedUser.getOpenid() + " ] saved successfully.");
 					}
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put(Constant.OPEN_ID, savedUser.getOpenid());
@@ -100,6 +100,7 @@ public class AuthController {
 				
 				User savedUser = this.userRepository.save(foundUser);
 				if (null != savedUser) {
+					logger.info("Update user [ OPENID: " + savedUser.getOpenid() + ", NICKNAME: " + savedUser.getNickName() + " successfully.");
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS, "update user: [ " + savedUser + " ] successfully.").build(),
 							HttpStatus.OK);

@@ -123,7 +123,7 @@ public class AdminController {
 			foundUser.setRole(value==false ? Constant.USER_ROLE_USER : Constant.USER_ROLE_VIP);
 			User savedUser = this.userRepository.save(foundUser);
 			if (null != savedUser) {
-				logger.info("Grant user [NickName: " + savedUser.getNickName() + ", Openid: " + savedUser.getOpenid() + "] " + 
+				logger.info("Grant user [NICKNAME: " + savedUser.getNickName() + ", OPENID: " + savedUser.getOpenid() + "] " + 
 						(value == false ? "USER role" : "VIP role successfully."));
 				return new ResponseEntity<Map<String, Object>>(
 						new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Grant access to user successfully.").build(),

@@ -35,6 +35,7 @@ import com.flight.repository.TourismRepository;
 import com.flight.repository.UserRepository;
 import com.flight.utils.Constant;
 import com.flight.utils.HttpResult;
+import com.flight.utils.MongoUtils;
 
 @Controller
 @RequestMapping("/message")
@@ -72,7 +73,7 @@ public class MessageController {
 			message.setPostDate(new Date().getTime());
 			Message savedMessage = this.messageRepository.save(message);
 			if (null != savedMessage) {
-				
+				logger.info("User [" + savedMessage.getPosterNickName() + "] posted a message: [" + savedMessage.getContent() + "] on TOPIC:[" + savedMessage.getBeRepliedTopicTitle() + "]");
 				/*// update poster info
 				User foundPoster = this.userRepository.findByOpenid(message.getPoster());
 				Map<String, Object> map = new HashMap<String, Object>();
@@ -174,7 +175,8 @@ public class MessageController {
 			@RequestParam("beRepliedTopicId") String beRepliedTopicId, 
 			@RequestParam(value = "pageSize", required = false, defaultValue = "15") int pageSize,
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
-			@RequestParam(value = "subject") String subject) {
+			@RequestParam(value = "subject") String subject,
+			@RequestParam(value = "sort", required = false) String sort) {
 		Boolean checkBestAns = false;
 		String bestAnsId = null;
 		if (StringUtils.isNotEmpty(subject) && subject.equals(Constant.MESSAGE_SUBJECT_QUESTION)) {
@@ -184,7 +186,7 @@ public class MessageController {
 				bestAnsId = foundQuestion.getBestAnswer();
 			}
 		}
-		Page<Message> repliesPage = this.msgRepository.findByBeRepliedTopicId(beRepliedTopicId, new PageRequest(pageNumber, pageSize));
+		Page<Message> repliesPage = this.msgRepository.findByBeRepliedTopicId(beRepliedTopicId, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
 		List<Message> contents = repliesPage.getContent();
 		List<Map<String, Object>> replies = new ArrayList<Map<String, Object>> ();
 		if (null != contents && !contents.isEmpty()) {
@@ -227,6 +229,7 @@ public class MessageController {
 			foundMessage.setDeletedDate(new Date().getTime());
 			Message updatedMessage = this.msgRepository.save(foundMessage);
 			if (null != updatedMessage) {
+				logger.info("Set message [" + updatedMessage.getId() + "] as DELETED successfully.");
 				return new ResponseEntity<Map<String, Object>>(new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 						"Reply updated into DELETED successfully.").build(), HttpStatus.OK);
 			}
@@ -244,6 +247,7 @@ public class MessageController {
 				foundQuestion.setIsFixed(Constant.QUESTION_FIXED);
 				Question updatedQuestion = this.questionRepository.save(foundQuestion);
 				if (null != updatedQuestion) {
+					logger.info("Set question [" + updatedQuestion.getId() + "] to be fixed successfully.");
 					return new ResponseEntity<Map<String, Object>>(new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 							"Set question " + questionId + " to be fixed successfully.").build(), HttpStatus.OK);
 				}

@@ -54,6 +54,7 @@ public class CustomController {
 			custom.setIsDeleted(false);
 			Custom savedCustom = this.customRepository.save(custom);
 			if (null != savedCustom) {
+				logger.info("User [ " + savedCustom.getPosterNickName() + " ] posted a custom topic [ " + savedCustom.getId() + " ] successfully.");
 				return new ResponseEntity<Map<String, Object>>(
 						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 								"Custom [ " + savedCustom.getId() + " ] raised successfully.").build(),

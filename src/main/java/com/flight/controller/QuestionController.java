@@ -61,6 +61,7 @@ public class QuestionController {
 			question.setReplyCnt(0);
 			Question savedQuestion = this.questionRepository.save(question);
 			if (null != savedQuestion) {
+				logger.info("User [" + question.getPosterNickName() + "] posted question [" + savedQuestion.getTitle() + "] successfully.");
 				return new ResponseEntity<Map<String, Object>>(
 						new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 								"Question [ " + savedQuestion.getId() + " ] raised successfully.").build(),
@@ -100,7 +101,7 @@ public class QuestionController {
 				foundQuestion.setDeletedDate(new Date().getTime());
 				Question updatedQuestion = this.questionRepository.save(foundQuestion);
 				if (null != updatedQuestion) {
-					logger.info("Set question " + updatedQuestion.getId() + " deleted as [true]  successfully.");
+					logger.info("Set question " + updatedQuestion.getTitle() + " deleted as [true]  successfully.");
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 									"Set question " + updatedQuestion.getId() + " deleted as [true]  successfully.").build(),

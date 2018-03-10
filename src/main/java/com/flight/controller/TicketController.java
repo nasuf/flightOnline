@@ -60,7 +60,7 @@ public class TicketController {
 			ticket.setIsDeleted(false);
 			Ticket savedTicket = this.ticketRepository.save(ticket);
 			if (null != savedTicket) {
-				logger.info("Saved new ticket info successfully.");
+				logger.info("Saved new ticket [ID: " + savedTicket.getId() + ", TITLE: " + savedTicket.getTitle() + "] successfully.");
 				return new ResponseEntity<Map<String, Object>>(
 						new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Publish new ticket info successfully.").build(),
 						HttpStatus.OK);
@@ -136,13 +136,14 @@ public class TicketController {
 			if (null != foundUser) {
 				foundUser.setWechatId(wechatId);
 				User updatedUser = this.userRepository.save(foundUser);
-				if (null != updatedUser)
+				if (null != updatedUser) {
+					logger.info("User [ NickName: " + updatedUser.getNickName() + ", OPENID: " + updatedUser.getOpenid() + " ] tried to validated old member.");
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_SUCCESS,
 									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] successfully.").build(),
 							
 							HttpStatus.OK);
-				else 
+				}
 					return new ResponseEntity<Map<String, Object>>(
 							new HttpResult(Constant.RESULT_STATUS_FAILURE,
 									"Update wechatId to user [ " + updatedUser.getOpenid() + " ] failed.").build(),
@@ -167,7 +168,7 @@ public class TicketController {
 	        } );
 		return new ResponseEntity<Map<String, Object>>(
 				new HttpResult(Constant.RESULT_STATUS_SUCCESS,
-						"Get latest announcement successfully.", list.get(0)).build(),
+						"Get latest announcement successfully.", (null == list || list.isEmpty()) ? null : list.get(0)).build(),
 				HttpStatus.OK);
 	}
 	
