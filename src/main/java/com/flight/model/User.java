@@ -61,6 +61,12 @@ public class User {
 	
 	@Field
 	private List<PrivMessage> privMessageList;
+	
+	@Field
+	private Boolean isOldMember;
+	
+	@Field
+	private Long requestVipDate;
 
 	public String getId() {
 		return id;
@@ -190,13 +196,30 @@ public class User {
 		this.privMessageList = privMessageList;
 	}
 
+	public Boolean getIsOldMember() {
+		return isOldMember;
+	}
+
+	public void setIsOldMember(Boolean isOldMember) {
+		this.isOldMember = isOldMember;
+	}
+
+	public Long getRequestVipDate() {
+		return requestVipDate;
+	}
+
+	public void setRequestVipDate(Long requestVipDate) {
+		this.requestVipDate = requestVipDate;
+	}
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", nickName=" + nickName + ", openid=" + openid + ", gender=" + gender
 				+ ", avatarUrl=" + avatarUrl + ", language=" + language + ", city=" + city + ", province=" + province
 				+ ", role=" + role + ", adminPwd=" + adminPwd + ", wechatId=" + wechatId + ", signUpTourismList="
 				+ signUpTourismList + ", signUpCustomResourceSet=" + signUpCustomResourceSet + ", registerDate="
-				+ registerDate + ", beVipDate=" + beVipDate + ", privMessageList=" + privMessageList + "]";
+				+ registerDate + ", beVipDate=" + beVipDate + ", privMessageList=" + privMessageList + ", isOldMember="
+				+ isOldMember + ", requestVipDate=" + requestVipDate + "]";
 	}
 
 

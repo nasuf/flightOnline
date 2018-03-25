@@ -135,6 +135,8 @@ public class TicketController {
 			User foundUser = this.userRepository.findByOpenid(openid);
 			if (null != foundUser) {
 				foundUser.setWechatId(wechatId);
+				foundUser.setIsOldMember(true);
+				foundUser.setRequestVipDate(new Date().getTime());
 				User updatedUser = this.userRepository.save(foundUser);
 				if (null != updatedUser) {
 					logger.info("User [ NickName: " + updatedUser.getNickName() + ", OPENID: " + updatedUser.getOpenid() + " ] tried to validated old member.");

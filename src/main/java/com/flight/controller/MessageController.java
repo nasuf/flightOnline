@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.flight.model.Custom;
 import com.flight.model.Message;
@@ -222,11 +223,45 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value = "/reply/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Map<String, Object>> deleteReply(@PathVariable("id") String id) {
+	public @ResponseBody ResponseEntity<Map<String, Object>> deleteReply(@PathVariable("id") String id) {
 		Message foundMessage = this.msgRepository.findOne(id);
 		if (null != foundMessage){
 			foundMessage.setIsDeleted(true);
 			foundMessage.setDeletedDate(new Date().getTime());
+			String subject = foundMessage.getSubject();
+			String topicId = foundMessage.getBeRepliedTopicId();
+			switch (subject) {
+			case Constant.MESSAGE_SUBJECT_TICKET:
+				Ticket foundTicket = this.ticketRepository.findOne(topicId);
+				if(null != foundTicket && null != foundTicket.getReplyCnt()) {
+					foundTicket.setReplyCnt(foundTicket.getReplyCnt() - 1);
+					this.ticketRepository.save(foundTicket);
+				}
+				break;
+			case Constant.MESSAGE_SUBJECT_TOURISM:
+				Tourism foundTourism = this.tourismRepository.findOne(topicId);
+				if(null != foundTourism && null != foundTourism.getReplyCnt()) {
+					foundTourism.setReplyCnt(foundTourism.getReplyCnt() - 1);
+					this.tourismRepository.save(foundTourism);
+				}
+				break;
+			case Constant.MESSAGE_SUBJECT_CUSTOM:
+				Custom foundCustom = this.customRepository.findOne(topicId);
+				if (null != foundCustom && null != foundCustom.getReplyCnt()) {
+					foundCustom.setReplyCnt(foundCustom.getReplyCnt() - 1);
+					this.customRepository.save(foundCustom);
+				}
+				break;
+			case Constant.MESSAGE_SUBJECT_QUESTION:
+				Question foundQuestion = this.questionRepository.findOne(topicId);
+				if (null != foundQuestion && null != foundQuestion.getReplyCnt()) {
+					foundQuestion.setReplyCnt(foundQuestion.getReplyCnt() - 1);
+					this.questionRepository.save(foundQuestion);
+				}
+				break;
+			default:
+				break;
+			}
 			Message updatedMessage = this.msgRepository.save(foundMessage);
 			if (null != updatedMessage) {
 				logger.info("Set message [" + updatedMessage.getId() + "] as DELETED successfully.");

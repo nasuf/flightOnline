@@ -1,12 +1,14 @@
 package com.flight.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -110,9 +112,17 @@ public class AdminController {
 			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
 			@RequestParam(value = "sort", required = false) String sort) {
 		Page<User> userPage = this.userRepository.findByRole(role, new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+		List<User> vipList = this.userRepository.findByRole(Constant.USER_ROLE_VIP);
+		List<User> userList = this.userRepository.findByRole(Constant.USER_ROLE_USER);
+		int vipCount = vipList.size();
+		int userCount = userList.size();
 		List<User> users = userPage.getContent();
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("data", users);
+		data.put("vipCount", vipCount);
+		data.put("userCount", userCount);
 		return new ResponseEntity<Map<String, Object>>(
-				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Find vips successfully", users).build(),
+				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Find vips successfully", data).build(),
 				HttpStatus.OK);
 	}
 	
@@ -299,5 +309,29 @@ public class AdminController {
 				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "switch role successfully").build(),
 				HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/oldMember/unViped", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> findOldMemberWithUserStatus(
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value = "sort", required = false) String sort) {
+		Page<User> member = this.userRepository.findByIsOldMemberAndRole(true, Constant.USER_ROLE_USER, 
+				new PageRequest(pageNumber, pageSize, MongoUtils.buildSort(sort)));
+		List<User> members = member.getContent();
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Find unViped old members successfully", members).build(),
+				HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/user/specific", method = RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> findSpecificUser(@RequestParam("keywords") String keywords) {
+		List<User> users_L1 = this.userRepository.findByNickNameLikeIgnoreCase(keywords);
+		List<User> users_L2 = this.userRepository.findByWechatIdLikeIgnoreCase(keywords);
+		users_L1.addAll(users_L2);
+		return new ResponseEntity<Map<String, Object>>(
+				new HttpResult(Constant.RESULT_STATUS_SUCCESS, "Find specific user successfully", users_L1).build(),
+				HttpStatus.OK);
+	}
+	
 	
 }
